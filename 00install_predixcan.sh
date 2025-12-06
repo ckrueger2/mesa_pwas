@@ -10,17 +10,24 @@ if [ ! -d ~/miniconda3 ]; then
     conda init bash
 fi 
 
+#accept permissions
+conda config --set channel_priority strict
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
 #clone repo and create environment
 if [ ! -d MetaXcan ]; then
     git clone https://github.com/hakyimlab/MetaXcan
     cd MetaXcan
+    #git checkout 76a11b856f3cbab0b866033d518c201374a5594b
     if [ -f MetaXcan/software/conda_env.yaml ]; then
-        conda env create -f MetaXcan/software/conda_env.yaml
+        conda env create -f software/conda_env.yaml
         cd ..
     else
-        #create environment manually as fallback (version numbers may need to be changed with future updates)
+        # Create environment manually as fallback (version numbers may need to be changed with future updates)
         conda create -n imlabtools python=3.8 numpy pandas scipy -y
     fi
+    cd ..
 fi
 
 #create imlabtools manually if needed (version numbers may need to be changed with future updates)
