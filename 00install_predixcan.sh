@@ -14,9 +14,9 @@ fi
 export PATH=~/miniconda3/bin:$PATH
 eval "$(conda shell.bash hook)"
 
-#set strict channel priority
+#set strict channel priority and remove defaults properly
 conda config --set channel_priority strict
-conda config --remove channels defaults
+conda config --remove-key channels 2>/dev/null || true   # <- fixed this line
 conda config --add channels conda-forge
 
 #clone MetaXcan repo if needed
