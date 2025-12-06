@@ -26,26 +26,26 @@ my_bucket <- Sys.getenv('WORKSPACE_BUCKET')
 
 #PERFORM COMMAND LINE FORMATTING FOR S-PREDIXCAN FILE
 #upload SNP file to workspace bucket
-command7 <- paste0("gsutil -m cp -v ~/mesa_pwas/predixcan_models_varids-effallele_mesa.txt.gz ", my_bucket, "/data/")
+command7 <- paste0("gsutil -m cp -v ~/mesa_pwas/predixcan_models_varids-effallele_mesa.txt.gz ", my_bucket, "/data/predixcan_models_varids-effallele_mesa", args$pop, ".txt.gz")
 system(command7, intern=TRUE)
 
 #unzip files
-command8 <- paste0("gsutil cat ", my_bucket, "/data/predixcan_models_varids-effallele_mesa.txt.gz | gunzip > /tmp/predixcan_models_varids-effallele_mesa.txt")
+command8 <- paste0("gsutil cat ", my_bucket, "/data/predixcan_models_varids-effallele_mesa", args$pop, ".txt.gz | gunzip > /tmp/predixcan_models_varids-effallele_mesa", args$pop, ".txt")
 system(command8)
 
 #format reference file
-system("awk -F'[,:]' 'NR>1 {print $1\":\"$2}' /tmp/predixcan_models_varids-effallele_mesa.txt > /tmp/chrpos_allele_table.tsv", intern=TRUE)
+system("awk -F'[,:]' 'NR>1 {print $1\":\"$2}' /tmp/predixcan_models_varids-effallele_mesa", args$pop, ".txt > /tmp/chrpos_allele_table", args$pop, ".tsv", intern=TRUE)
 
 #make temp files
 command9 <- paste0("gsutil cp ", my_bucket, "/data/", args$pop, "_full_", args$phecode,".tsv /tmp/")
 system(command9)
 
 #filter SNPs
-command10 <- paste0("awk 'NR==FNR{a[$1];next} $1 in a' /tmp/chrpos_allele_table.tsv /tmp/", args$pop, "_full_", args$phecode, ".tsv > /tmp/mesa_", args$phecode, ".tsv")
+command10 <- paste0("awk 'NR==FNR{a[$1];next} $1 in a' /tmp/chrpos_allele_table", args$pop, ".tsv /tmp/", args$pop, "_full_", args$phecode, ".tsv > /tmp/mesa_", args$phecode, "_", args$pop, ".tsv")
 system(command10)
 
 #save to bucket
-command11 <- paste0("gsutil cp /tmp/mesa_", args$phecode, ".tsv ", my_bucket, "/data/", args$pop, "_mesa_", args$phecode,".tsv")
+command11 <- paste0("gsutil cp /tmp/mesa_", args$phecode, "_", args$pop, ".tsv ", my_bucket, "/data/", args$pop, "_mesa_", args$phecode,".tsv")
 system(command11)
 
 #check bucket
@@ -123,4 +123,4 @@ if (check_mesa != 0) {
 }
 
 #clean up tmp files
-system(paste0("rm -f /tmp/subset_", args$phecode, ".tsv /tmp/nochr", args$phecode, ".tsv /tmp/", args$phecode, "ref.vcf /tmp/predixcan_models_varids-effallele_mesa.txt /tmp/chrpos_allele_table.tsv /tmp/", args$pop, "_full_", args$phecode, ".tsv /tmp/mesa_", args$phecode, ".tsv"), intern=TRUE)
+system(paste0("rm -f /tmp/chrpos_allele_table.tsv /tmp/", args$pop, "_full_", args$phecode, ".tsv /tmp/mesa_", args$phecode, ".tsv"), intern=TRUE)
