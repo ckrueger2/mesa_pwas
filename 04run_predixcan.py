@@ -48,7 +48,7 @@ def main():
     --model_db_path {model_db_path} \
     --covariance {covariance_path} \
     --keep_non_rsid \
-    --model_db_snp_key rsid \
+    --model_db_snp_key RSID \
     --throw \
     --output_file {output}"
         
