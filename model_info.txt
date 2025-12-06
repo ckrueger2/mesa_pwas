@@ -7,3 +7,6 @@ Prediction Models:
 --pop [AMR] [EUR] [AFR] [META]
 
 --phecode
+
+
+python ~/mesa_pwas/01pull_data.py --phecode CV_404.1 --pop EUR

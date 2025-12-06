@@ -26,7 +26,7 @@ my_bucket <- Sys.getenv('WORKSPACE_BUCKET')
 
 #PERFORM COMMAND LINE FORMATTING FOR S-PREDIXCAN FILE
 #upload SNP file to workspace bucket
-command7 <- paste0("gsutil -m cp -v ~/aou_predixcan/predixcan_models_varids-effallele_mesa.txt.gz ", my_bucket, "/data/")
+command7 <- paste0("gsutil -m cp -v ~/mesa_pwas/predixcan_models_varids-effallele_mesa.txt.gz ", my_bucket, "/data/")
 system(command7, intern=TRUE)
 
 #unzip files
