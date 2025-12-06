@@ -27,6 +27,8 @@ fi
 #define populations
 POPS=("META" "EUR" "AFR" "AMR")
 
+chmod +x ~/mesa_pwas/00hail_wrapper.sh
+
 #run in parallel
 for POP in "${POPS[@]}"; do
     (
