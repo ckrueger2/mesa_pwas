@@ -38,3 +38,9 @@ Example S-PrediXcan Command:
 ```
 bash ~/mesa_pwas/00pwas_wrapper.sh --phecode CV_404.1 --pop EUR --model EN --data cis_fm
 ```
+
+### Long runtime solutions
+- I havent figured out nohup - please give it a shot if you'd like and let me know if you get it to work with the kernel quit
+- I use the app 'Amphetamine' (from Apple app store for mac) to keep my screen on and leave my computer on a charger
+- I set my automatically pause after idle to 8 hours (default is 30 minutes) *this must be done when building environment*
+<img width="665" height="434" alt="Screenshot 2025-12-06 at 5 03 12 PM" src="https://github.com/user-attachments/assets/4d2740ea-32cf-4674-9f9b-3aa797257225" />
