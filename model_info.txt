@@ -13,5 +13,7 @@ bash ~/mesa_pwas/00hail_wrapper.sh --phecode CV_404.1 --pop AFR
 python ~/mesa_pwas/01pull_data.py --phecode CV_404.1 --pop EUR
 Rscript ~/mesa_pwas/02table_format.R --phecode CV_404.1 --pop EUR
 
-
 bash ~/mesa_pwas/00install_predixcan.sh
+gsutil -m cp -r /home/matt/models_for_pwas gs://fc-secure-915a27e9-c961-4aa0-b53f-09825278579c/data/
+
+python ~/mesa_pwas/04run_predixcan.py --phecode CV_404.1 --pop EUR --model EN --data cis_fm

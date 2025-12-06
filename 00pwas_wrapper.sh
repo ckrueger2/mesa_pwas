@@ -2,11 +2,9 @@
 
 #command
 usage() {
-    echo "Usage: $0 --phecode <PHECODE> --pop <POP> --ref <REF> [--gwas_h2 <H2>] [--gwas_N <N>] [--databases]"
+    echo "Usage: $0 --phecode <PHECODE> --pop <POP> --model <MODEL> --data <DATA>"
     exit 1
 }
-        
-TISSUES="Adipose_Subcutaneous\nAdipose_Visceral_Omentum\nAdrenal_Gland\nArtery_Aorta\nArtery_Coronary\nArtery_Tibial\nBrain_Amygdala\nBrain_Anterior_cingulate_cortex_BA24\nBrain_Caudate_basal_ganglia\nBrain_Cerebellar_Hemisphere\nBrain_Cerebellum\nBrain_Cortex\nBrain_Frontal_Cortex_BA9\nBrain_Hippocampus\nBrain_Hypothalamus\nBrain_Nucleus_accumbens_basal_ganglia\nBrain_Putamen_basal_ganglia\nBrain_Spinal_cord_cervical_c-1\nBrain_Substantia_nigra\nBreast_Mammary_Tissue\nCells_Cultured_fibroblasts\nCells_EBV-transformed_lymphocytes\nColon_Sigmoid\nColon_Transverse\nEsophagus_Gastroesophageal_Junction\nEsophagus_Mucosa\nEsophagus_Muscularis\nHeart_Atrial_Appendage\nHeart_Left_Ventricle\nKidney_Cortex\nLiver\nLung\nMinor_Salivary_Gland\nMuscle_Skeletal\nNerve_Tibial\nOvary\nPancreas\nPituitary\nProstate\nSkin_Not_Sun_Exposed_Suprapubic\nSkin_Sun_Exposed_Lower_leg\nSmall_Intestine_Terminal_Ileum\nSpleen\nStomach\nTestis\nThyroid\nUterus\nVagina\nWhole_Blood"
 
 #command-line arguments
 while [[ $# -gt 0 ]]; do
@@ -19,21 +17,13 @@ while [[ $# -gt 0 ]]; do
             POP=$2
             shift 2
             ;;
-        --ref)
-            REF=$2
+        --model)
+            MODEL=$2
             shift 2
             ;;
-        --gwas_h2)
-            H2=$2
+        --data)
+            DATA=$2
             shift 2
-            ;;
-        --gwas_N)
-            N=$2
-            shift 2
-            ;;
-        --databases)
-            echo -e "$TISSUES"
-            shift 1
             ;;
         *)
             echo "unknown flag: $1"
@@ -43,15 +33,15 @@ while [[ $# -gt 0 ]]; do
 done
 
 #check for required arguments
-if [[ -z "$PHECODE" || -z "$POP" || -z "$REF" ]]; then
+if [[ -z "$PHECODE" || -z "$POP" || -z "$MODEL" || -z "$DATA"]]; then
     usage
 fi
 
 #github repo path
-REPO=$HOME/aou_predixcan
+REPO=$HOME/mesa_pwas
 
 #set up S-PrediXcan environment
-bash "$REPO/set-up-predixcan.sh"
+bash "$REPO/00install_predixcan.sh"
 
 #activate conda
 source ~/miniconda3/bin/activate
@@ -74,51 +64,52 @@ fi
 
 #patch numpy.str deprecation in Utilities.py
 if [ -f /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py ]; then
-    # First check if the file contains the original numpy.str (not already patched)
+    #first check if the file contains the original numpy.str (not already patched)
     if grep -q "numpy\.str[^_]" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
-        # Only replace numpy.str with numpy.str_ if it hasn't been replaced yet
+        #only replace numpy.str with numpy.str_ if it hasn't been replaced yet
         sed -i 's/numpy\.str\([^_]\)/numpy.str_\1/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
     elif grep -q "numpy\.str_" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
-        # If we find numpy.str__ (double underscore), replace it with numpy.str_
+        #if we find numpy.str__ (double underscore), replace it with numpy.str_
         sed -i 's/numpy\.str__/numpy.str_/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
     fi
     
-    # Fix the specific line that causes errors with numpy.str__
+    #fix the specific line that causes errors with numpy.str__
     sed -i 's/type = \[numpy\.str[_]*, numpy\.float64, numpy\.float64, numpy\.float64\]/type = \[str, numpy.float64, numpy.float64, numpy.float64\]/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
     
-    # Fix pandas drop() method call
+    #fix pandas drop() method call
     sed -i 's/results = results.drop("n_snps_in_model",1)/results = results.drop(columns=["n_snps_in_model"])/' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
 fi
 
-output_file="/home/jupyter/${POP}_predixcan_output_${PHECODE}_${REF}.csv"
+output_file="/home/jupyter/${POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.csv"
+
+# #check if the output file already exists
+# if [ -f "$output_file" ]; then
+#     echo "WARNING: Output file $output_file already exists."
+#     read -p "Press ENTER to replace it, or type 'n' to cancel: " response
+#     
+#     if [[ $response =~ ^[Nn]$ ]]; then
+#         echo "Operation cancelled by user."
+#         exit 1
+#     else
+#         # Delete the file
+#         rm -f "$output_file"
+#         echo "Existing file has been deleted."
+#     fi
+# fi
 
 #check if the output file already exists
 if [ -f "$output_file" ]; then
-    echo "WARNING: Output file $output_file already exists."
-    read -p "Press ENTER to replace it, or type 'n' to cancel: " response
-    
-    if [[ $response =~ ^[Nn]$ ]]; then
-        echo "Operation cancelled by user."
-        exit 1
-    else
-        # Delete the file
-        rm -f "$output_file"
-        echo "Existing file has been deleted."
-    fi
+    echo "WARNING: Output file $output_file already exists. Replacing..."
+    rm -f "$output_file"
 fi
 
 #run s-predixcan
-PREDIXCAN_CMD="python $REPO/05run-predixcan.py --phecode \"$PHECODE\" --pop \"$POP\" --ref \"$REF\""
-if [[ ! -z "$H2" ]]; then
-    PREDIXCAN_CMD="$PREDIXCAN_CMD --gwas_h2 \"$H2\""
-fi
-if [[ ! -z "$N" ]]; then
-    PREDIXCAN_CMD="$PREDIXCAN_CMD --gwas_N \"$N\""
-fi
+PREDIXCAN_CMD="python $REPO/05run-predixcan.py --phecode \"$PHECODE\" --pop \"$POP\" --model \"$MODEL\" --data \"$DATA\""
+
 eval $PREDIXCAN_CMD
 
 #run qqman on twas sum stats
-Rscript "$REPO/06twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --ref "$REF"
+Rscript "$REPO/06twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
 
 #deactivate imlabtools
 conda deactivate
