@@ -14,9 +14,13 @@ fi
 export PATH=~/miniconda3/bin:$PATH
 eval "$(conda shell.bash hook)"
 
-#set strict channel priority and remove defaults properly
+#accept Terms of Service for Anaconda channels
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
+#set strict channel priority and configure channels
 conda config --set channel_priority strict
-conda config --remove-key channels 2>/dev/null || true   # <- fixed this line
+conda config --remove-key channels 2>/dev/null || true
 conda config --add channels conda-forge
 
 #clone MetaXcan repo if needed
@@ -25,10 +29,9 @@ if [ ! -d MetaXcan ]; then
     cd MetaXcan
     if [ -f software/conda_env.yaml ]; then
         conda env create -f software/conda_env.yaml
-        cd ..
     else
-        # fallback manual environment creation
-        conda create -n imlabtools python=3.8 numpy pandas scipy -y
+        # Fallback manual environment creation
+        conda create -n imlabtools python=3.8 numpy pandas scipy h5py -y
     fi
     cd ..
 fi
