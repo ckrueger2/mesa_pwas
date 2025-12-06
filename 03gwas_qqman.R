@@ -34,6 +34,14 @@ destination_filename <- paste0(args$pop, "_", args$phecode,"_gwas_manhattan.png"
 #manhattan plot title name
 title <- paste0(args$pop, " ", args$phecode, " GWAS Manhattan Plot")
 
+#remove 'chr' prefix and handle X/Y/MT
+hail_table$CHR <- toupper(as.character(hail_table$CHR))
+hail_table$CHR <- gsub("^CHR", "", hail_table$CHR)   # remove 'chr' or 'CHR'
+hail_table$CHR[hail_table$CHR == "X"] <- 23
+hail_table$CHR[hail_table$CHR == "Y"] <- 24
+hail_table$CHR[hail_table$CHR == "MT"] <- 25
+
+#ensure numeric
 hail_table$CHR <- as.numeric(as.character(hail_table$CHR))
 
 #png destination
