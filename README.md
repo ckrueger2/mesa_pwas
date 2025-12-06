@@ -27,7 +27,7 @@ bash ~/mesa_pwas/00hail_wrapper_parallel.sh --phecode <PHECODE>
 3. Run in lab server terminal: `gcloud auth login`, then follow prompts to log into AoU account
 4. Run in lab server terminal: `gcloud config set project {PASTE_YOUR_TERRA_ID_HERE}`
 5. Run in lab server terminal: `gsutil -m cp -r /home/claudia/models_for_pwas {PASTE_YOUR_BUCKET_HERE}/data/`
-6. The 00pwas_wrapper must be ran at least once. After one successful run (at least to where S-PrediXcan begins to run and `Running S-PrediXcan...` is printed in output), then the 04run_predixcan.py script can be run with different flags without re-running the full wrapper with `python ~/mesa_pwar/04run_predixcan.py --phecode <PHECODE> --pop <POP> --model <MODEL> --data <DATA>`
+6. The 00pwas_wrapper must be ran at least once. After one successful run (at least to where S-PrediXcan begins to run and `Running S-PrediXcan...` is printed in output), then the 04run_predixcan.py script can be run with different flags without re-running the full wrapper with `python ~/mesa_pwas/04run_predixcan.py --phecode <PHECODE> --pop <POP> --model <MODEL> --data <DATA>`
 
 `<PHECODE>` is the phenotype code of interest (ex. CV_404)  
 `<POP>` is the population the sample originates from (ex. META)  
