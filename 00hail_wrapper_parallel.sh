@@ -31,7 +31,7 @@ POPS=("META" "EUR" "AFR" "AMR")
 for POP in "${POPS[@]}"; do
     (
         echo "Starting analysis for phecode $PHECODE, population $POP..."
-        ./mesa_pwas/00hail_wrapper.sh --phecode "$PHECODE" --pop "$POP"
+        /home/jupyter/mesa_pwas/00hail_wrapper.sh --phecode "$PHECODE" --pop "$POP"
         echo "Completed phecode $PHECODE, population $POP"
     ) &
 done
