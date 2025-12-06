@@ -48,8 +48,9 @@ def main():
     --model_db_path {model_db_path} \
     --covariance {covariance_path} \
     --keep_non_rsid \
-    --model_db_snp_key RSID \
+    --model_db_snp_key rsid \
     --throw \
+    --verbosity 9 \
     --output_file {output}"
         
     #execute the S-PrediXcan command
