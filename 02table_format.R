@@ -100,7 +100,7 @@ mesa_table <- mesa_table %>%
 
 #select columns
 final_mesa_table <- mesa_table %>%
-  select(locus, alleles, ID, REF, ALT, CHR, BETA, SE, Pvalue, SNP)
+  select(locus, alleles, ID, REF, ALT, CHR, POS, BETA, SE, Pvalue, SNP)
 
 #check tables
 #cat("Final MESA filtered table:\n")
