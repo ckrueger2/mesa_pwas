@@ -1,0 +1,9 @@
+Prediction Models:
+/home/matt/models_for_pwas/{model}/{data}/{pop}_{model}_covariances.txt.gz
+/home/matt/models_for_pwas/{model}/{data}/{pop}_{model}.db
+
+--model [EN] [MASHR] [UDR]
+--data [cis] [cis_fm] [trans] [trans_fm] [cistrans_fm - EN only]
+--pop [AMR] [EUR] [AFR] [META]
+
+--phecode
