@@ -104,12 +104,12 @@ if [ -f "$output_file" ]; then
 fi
 
 #run s-predixcan
-PREDIXCAN_CMD="python $REPO/05run-predixcan.py --phecode \"$PHECODE\" --pop \"$POP\" --model \"$MODEL\" --data \"$DATA\""
+PREDIXCAN_CMD="python $REPO/04run_predixcan.py --phecode \"$PHECODE\" --pop \"$POP\" --model \"$MODEL\" --data \"$DATA\""
 
 eval $PREDIXCAN_CMD
 
 #run qqman on twas sum stats
-Rscript "$REPO/06twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+Rscript "$REPO/05twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
 
 #deactivate imlabtools
 conda deactivate
