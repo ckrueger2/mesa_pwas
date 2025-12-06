@@ -70,6 +70,7 @@ colnames(mesa_table) <- c("locus","alleles","BETA","SE","Het_Q","Pvalue","Pvalue
 #check table
 cat("MESA filtered table preview:\n")
 head(mesa_table)
+tail(mesa_table)
 
 #MESA TABLE
 #reformat locus column to chr_pos_ref_alt_b38
@@ -90,46 +91,31 @@ mesa_table$ID <- paste0(mesa_table$locus, ":", mesa_table$REF, ":", mesa_table$A
 mesa_table$locus_formatted <- NULL
 mesa_table$alleles_formatted <- NULL
 
-#edit sex chromosomes
-mesa_table$CHR <- gsub("X", "23", mesa_table$CHR)
-mesa_table$CHR <- gsub("Y", "24", mesa_table$CHR)
-
 #FINAL FORMATTING
-#format chromosomes
-mesa_table$CHR <- gsub("chr", "", mesa_table$CHR)
-mesa_table$CHR <- gsub("X", "23", mesa_table$CHR)
-mesa_table$CHR <- gsub("Y", "24", mesa_table$CHR)
-
-#make numeric
-mesa_table$CHR <- as.numeric(mesa_table$CHR)
-
 #sort by chr, pos
-merged_mesa_table <- merged_mesa_table %>%
+mesa_table <- mesa_table %>%
   arrange(CHR, POS)
 
 #rename header
-merged_mesa_table$"#CHROM" <- merged_mesa_table$CHR
-merged_mesa_table$CHR <- NULL
+#merged_mesa_table$"#CHROM" <- merged_mesa_table$CHR
+#merged_mesa_table$CHR <- NULL
 
 #select columns
-merged_mesa_table <- merged_mesa_table %>%
-  select(locus, alleles, ID, REF, ALT, "#CHROM", BETA, SE, Pvalue, SNP, ID)
+final_mesa_table <- mesa_table %>%
+  select(locus, alleles, ID, REF, ALT, CHR, BETA, SE, Pvalue, SNP)
 
 #edit X chromosome SNP file for mesa table
-mesa_table$SNP <- gsub("^chrX_", "X_", mesa_table$SNP)
-
-#edit locus column for pvalue filtered table
-filtered_merged_table$locus <- gsub("^chrX:", "X:", filtered_merged_table$locus)
+#mesa_table$SNP <- gsub("^chrX_", "X_", mesa_table$SNP)
 
 #check tables
 cat("Final MESA filtered table:\n")
-head(merged_mesa_table)
+head(final_mesa_table)
 
 #write mesa table
 mesa_destination_filename <- paste0(args$pop, "_formatted_mesa_", args$phecode,".tsv")
 
 #store the dataframe in current workspace
-write.table(merged_mesa_table, mesa_destination_filename, col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
+write.table(final_mesa_table, mesa_destination_filename, col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
 
 #copy the file from current workspace to the bucket
 system(paste0("gsutil cp ./", mesa_destination_filename, " ", my_bucket, "/data/"), intern=TRUE)

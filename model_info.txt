@@ -10,3 +10,4 @@ Prediction Models:
 
 
 python ~/mesa_pwas/01pull_data.py --phecode CV_404.1 --pop EUR
+Rscript ~/mesa_pwas/02table_format.R --phecode CV_404.1 --pop EUR
