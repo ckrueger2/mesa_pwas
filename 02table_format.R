@@ -68,9 +68,9 @@ mesa_table <- fread(name_of_mesa_file, header=FALSE, sep="\t")
 colnames(mesa_table) <- c("locus","alleles","BETA","SE","Het_Q","Pvalue","Pvalue_log10","CHR","POS","rank","Pvalue_expected","Pvalue_expected_log10")
 
 #check table
-cat("MESA filtered table preview:\n")
-head(mesa_table)
-tail(mesa_table)
+#cat("MESA filtered table preview:\n")
+#head(mesa_table)
+#tail(mesa_table)
 
 #MESA TABLE
 #reformat locus column to chr_pos_ref_alt_b38
@@ -100,8 +100,8 @@ final_mesa_table <- mesa_table %>%
   select(locus, alleles, ID, REF, ALT, CHR, BETA, SE, Pvalue, SNP)
 
 #check tables
-cat("Final MESA filtered table:\n")
-head(final_mesa_table)
+#cat("Final MESA filtered table:\n")
+#head(final_mesa_table)
 
 #write mesa table
 mesa_destination_filename <- paste0(args$pop, "_formatted_mesa_", args$phecode,".tsv")

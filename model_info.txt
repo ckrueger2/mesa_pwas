@@ -8,6 +8,7 @@ Prediction Models:
 
 --phecode
 
-
+bash ~/mesa_pwas/00hail_wrapper_parallel.sh --phecode CV_404.1
+bash ~/mesa_pwas/00hail_wrapper.sh --phecode CV_404.1 --pop AFR
 python ~/mesa_pwas/01pull_data.py --phecode CV_404.1 --pop EUR
 Rscript ~/mesa_pwas/02table_format.R --phecode CV_404.1 --pop EUR
