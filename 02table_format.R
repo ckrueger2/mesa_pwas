@@ -91,21 +91,13 @@ mesa_table$ID <- paste0(mesa_table$locus, ":", mesa_table$REF, ":", mesa_table$A
 mesa_table$locus_formatted <- NULL
 mesa_table$alleles_formatted <- NULL
 
-#FINAL FORMATTING
 #sort by chr, pos
 mesa_table <- mesa_table %>%
   arrange(CHR, POS)
 
-#rename header
-#merged_mesa_table$"#CHROM" <- merged_mesa_table$CHR
-#merged_mesa_table$CHR <- NULL
-
 #select columns
 final_mesa_table <- mesa_table %>%
   select(locus, alleles, ID, REF, ALT, CHR, BETA, SE, Pvalue, SNP)
-
-#edit X chromosome SNP file for mesa table
-#mesa_table$SNP <- gsub("^chrX_", "X_", mesa_table$SNP)
 
 #check tables
 cat("Final MESA filtered table:\n")
