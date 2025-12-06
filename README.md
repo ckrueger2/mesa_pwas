@@ -31,7 +31,7 @@ bash ~/mesa_pwas/00hail_wrapper_parallel.sh --phecode <PHECODE>
 
 `<PHECODE>` is the phenotype code of interest (ex. CV_404)  
 `<POP>` is the population the sample originates from (ex. META)  
-`<MODEL>` is the training tool (EN, MASHR, or UDR) 
+`<MODEL>` is the training tool (EN, MASHR, or UDR)   
 `<DATA>` is the data included (cis cis_fm, trans (MASHR and UDR only), trans_fm (MASHR and UDR only), cistrans_fm (EN only)
 
 Example S-PrediXcan Command:
