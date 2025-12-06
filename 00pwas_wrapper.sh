@@ -33,7 +33,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 #check for required arguments
-if [[ -z "$PHECODE" || -z "$POP" || -z "$MODEL" || -z "$DATA"]]; then
+if [[ -z "$PHECODE" || -z "$POP" || -z "$MODEL" || -z "$DATA" ]]; then
     usage
 fi
 
