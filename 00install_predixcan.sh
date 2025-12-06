@@ -16,6 +16,8 @@ eval "$(conda shell.bash hook)"
 
 #set strict channel priority
 conda config --set channel_priority strict
+conda config --remove channels defaults
+conda config --add channels conda-forge
 
 #clone MetaXcan repo if needed
 if [ ! -d MetaXcan ]; then
