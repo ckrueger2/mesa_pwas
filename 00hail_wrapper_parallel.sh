@@ -31,11 +31,7 @@ chmod +x ~/mesa_pwas/00hail_wrapper.sh
 
 #run in parallel
 for POP in "${POPS[@]}"; do
-    (
-        echo "Starting analysis for phecode $PHECODE, population $POP..."
-        /home/jupyter/mesa_pwas/00hail_wrapper.sh --phecode "$PHECODE" --pop "$POP"
-        echo "Completed phecode $PHECODE, population $POP"
-    ) &
+    ~/mesa_pwas/00hail_wrapper.sh --phecode "$PHECODE" --pop "$POP" > ~/${POP}_${PHECODE}_gwas.log 2>&1 &
 done
 
 #wait for all background jobs to complete
