@@ -82,6 +82,11 @@ else
     echo "Model files already exist, skipping download"
 fi
 
+if [ -f "$output_file" ]; then
+    echo "WARNING: Output file $output_file already exists. Replacing..."
+    rm -f "$output_file"
+fi
+            
 #run s-predixcan - continue even if it fails
 if python $REPO/04run_predixcan_filtered.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
     echo ""
