@@ -109,7 +109,7 @@ PREDIXCAN_CMD="python $REPO/04run_predixcan.py --phecode \"$PHECODE\" --pop \"$P
 eval $PREDIXCAN_CMD
 
 #run qqman on twas sum stats
-Rscript "$REPO/05twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
 
 #deactivate imlabtools
 conda deactivate
