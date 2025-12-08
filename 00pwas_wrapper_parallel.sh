@@ -63,7 +63,7 @@ conda activate imlabtools
 echo "Successfully activated imlabtools environment"
 
 #maximum number of parallel jobs
-MAX_PARALLEL=2
+MAX_PARALLEL=1
 
 #copy MESA model files to workspace if they don't exist
 if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; then
