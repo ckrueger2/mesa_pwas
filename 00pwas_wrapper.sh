@@ -48,8 +48,10 @@ source ~/miniconda3/bin/activate
 
 #create environment with compatible versions (version numbers may need to be changed with future updates)
 if ! conda env list | grep -q imlabtools; then
-    # If it doesn't exist, create it
-    conda create -n imlabtools python=3.8 numpy pandas scipy -y
+    conda create -n imlabtools python=3.8 "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
+else
+    #if environment exists, ensure compatible numpy version
+    conda install -n imlabtools "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
 fi
 
 #activate imlabtools

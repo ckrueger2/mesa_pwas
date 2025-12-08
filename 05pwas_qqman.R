@@ -107,8 +107,4 @@ manhattan(merged_df,
           suggestiveline = new_suggestive_threshold)
 dev.off()
 
-<<<<<<< HEAD
 cat("TWAS Manhattan plot complete\n")
-=======
-cat("TWAS Manhattan plot complete\n")
->>>>>>> bc9266e00741ccd4023b05dc890d0250e3f168b0
