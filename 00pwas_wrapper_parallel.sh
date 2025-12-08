@@ -61,32 +61,6 @@ fi
 conda activate imlabtools
 echo "Successfully activated imlabtools environment"
 
-#patch MetaXcan code
-if [ -f /home/jupyter/MetaXcan/software/metax/gwas/GWAS.py ]; then
-    sed -i 's/if a.dtype == numpy.object:/if a.dtype == object or str(a.dtype).startswith("object"):/' /home/jupyter/MetaXcan/software/metax/gwas/GWAS.py
-fi
-
-#patch numpy.str deprecation in Utilities.py
-if [ -f /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py ]; then
-    #first check if the file contains the original numpy.str (not already patched)
-    if grep -q "numpy\.str[^_]" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
-        #only replace numpy.str with numpy.str_ if it hasn't been replaced yet
-        sed -i 's/numpy\.str\([^_]\)/numpy.str_\1/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-    elif grep -q "numpy\.str_" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
-        #if we find numpy.str__ (double underscore), replace it with numpy.str_
-        sed -i 's/numpy\.str__/numpy.str_/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-    fi
-    
-    #fix the specific line that causes errors with numpy.str__
-    sed -i 's/type = \[numpy\.str[_]*, numpy\.float64, numpy\.float64, numpy\.float64\]/type = \[str, numpy.float64, numpy.float64, numpy.float64\]/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-    
-    #fix pandas drop() method call
-    sed -i 's/results = results.drop("n_snps_in_model",1)/results = results.drop(columns=["n_snps_in_model"])/' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-fi
-
-echo "Environment setup complete."
-echo ""
-
 chmod +x ~/mesa_pwas/00pwas_wrapper.sh
 
 #maximum number of parallel jobs
