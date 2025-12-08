@@ -77,7 +77,7 @@ if(length(zeros) > 0) {
 merged_df$chromosome_name <- gsub("X", "23", merged_df$chromosome_name)
 
 #make chr rows numeric and remove rows with NA
-merged_df$chromosome_name <- as.numeric(merged_df$chromosome_name)
+merged_df$CHR <- as.numeric(merged_df$chromosome_name)
 merged_df <- merged_df[!is.na(merged_df$CHR), ]
 
 #double check data
@@ -101,7 +101,7 @@ destination_filename <- paste0(args$pop, "_", args$phecode,"_twas_manhattan_", a
 #use qqman to plot the chromosome, location, snp, and pvalue into manhattan plot
 png(filename = destination_filename, width = 1200, height = 800, res = 100)
 manhattan(merged_df, 
-          chr = "chromosome_name", 
+          chr = "CHR", 
           bp = "start_position", 
           snp = "gene_name", 
           p = "pvalue",
