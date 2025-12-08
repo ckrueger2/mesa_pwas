@@ -102,7 +102,7 @@ for POP in "${POPS[@]}"; do
                 
                 #only run qqman if s-predixcan succeeded
                 if [ -f "$output_file" ]; then
-                    Rscript "$REPO/05twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+                    Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
                 else
                     echo "WARNING: Output file not found, skipping qqman plot"
                 fi

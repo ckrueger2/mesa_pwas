@@ -94,7 +94,7 @@ if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$M
     
     #only run qqman if s-prediXcan succeeded
     if [ -f "$output_file" ]; then
-        Rscript "$REPO/05twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+        Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
     else
         echo "WARNING: Output file not found, skipping qqman plot"
     fi
