@@ -48,10 +48,8 @@ source ~/miniconda3/bin/activate
 
 #create environment with compatible versions (version numbers may need to be changed with future updates)
 if ! conda env list | grep -q imlabtools; then
-    conda create -n imlabtools python=3.8 "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
-else
-    #if environment exists, ensure compatible numpy version
-    conda install -n imlabtools "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
+    # If it doesn't exist, create it
+    conda create -n imlabtools python=3.8 numpy pandas scipy -y
 fi
 
 #activate imlabtools
@@ -59,28 +57,28 @@ if conda activate imlabtools; then
     echo "Successfully activated imlabtools environment"
 fi
 
-#patch MetaXcan code
-if [ -f /home/jupyter/MetaXcan/software/metax/gwas/GWAS.py ]; then
-    sed -i 's/if a.dtype == numpy.object:/if a.dtype == object or str(a.dtype).startswith("object"):/' /home/jupyter/MetaXcan/software/metax/gwas/GWAS.py
-fi
-
-#patch numpy.str deprecation in Utilities.py
-if [ -f /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py ]; then
-    #first check if the file contains the original numpy.str (not already patched)
-    if grep -q "numpy\.str[^_]" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
-        #only replace numpy.str with numpy.str_ if it hasn't been replaced yet
-        sed -i 's/numpy\.str\([^_]\)/numpy.str_\1/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-    elif grep -q "numpy\.str_" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
-        #if we find numpy.str__ (double underscore), replace it with numpy.str_
-        sed -i 's/numpy\.str__/numpy.str_/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-    fi
-    
-    #fix the specific line that causes errors with numpy.str__
-    sed -i 's/type = \[numpy\.str[_]*, numpy\.float64, numpy\.float64, numpy\.float64\]/type = \[str, numpy.float64, numpy.float64, numpy.float64\]/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-    
-    #fix pandas drop() method call
-    sed -i 's/results = results.drop("n_snps_in_model",1)/results = results.drop(columns=["n_snps_in_model"])/' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
-fi
+# #patch MetaXcan code
+# if [ -f /home/jupyter/MetaXcan/software/metax/gwas/GWAS.py ]; then
+#     sed -i 's/if a.dtype == numpy.object:/if a.dtype == object or str(a.dtype).startswith("object"):/' /home/jupyter/MetaXcan/software/metax/gwas/GWAS.py
+# fi
+# 
+# #patch numpy.str deprecation in Utilities.py
+# if [ -f /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py ]; then
+#     #first check if the file contains the original numpy.str (not already patched)
+#     if grep -q "numpy\.str[^_]" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
+#         #only replace numpy.str with numpy.str_ if it hasn't been replaced yet
+#         sed -i 's/numpy\.str\([^_]\)/numpy.str_\1/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
+#     elif grep -q "numpy\.str_" /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py; then
+#         #if we find numpy.str__ (double underscore), replace it with numpy.str_
+#         sed -i 's/numpy\.str__/numpy.str_/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
+#     fi
+#     
+#     # Fix the specific line that causes errors with numpy.str__
+#     sed -i 's/type = \[numpy\.str[_]*, numpy\.float64, numpy\.float64, numpy\.float64\]/type = \[str, numpy.float64, numpy.float64, numpy.float64\]/g' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
+#     
+#     # Fix pandas drop() method call
+#     sed -i 's/results = results.drop("n_snps_in_model",1)/results = results.drop(columns=["n_snps_in_model"])/' /home/jupyter/MetaXcan/software/metax/metaxcan/Utilities.py
+# fi
 
 output_file="/home/jupyter/${POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.csv"
 
