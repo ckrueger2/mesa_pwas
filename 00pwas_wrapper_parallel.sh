@@ -54,18 +54,17 @@ source ~/miniconda3/bin/activate
 
 #create environment if needed
 if ! conda env list | grep -q imlabtools; then
-    conda create -n imlabtools python=3.8 numpy pandas scipy -y
+    conda create -n imlabtools python=3.8 "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
+else
+    conda install -n imlabtools "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
 fi
 
 #activate imlabtools
 conda activate imlabtools
 echo "Successfully activated imlabtools environment"
 
-chmod +x ~/mesa_pwas/00pwas_wrapper.sh
-
 #maximum number of parallel jobs
 MAX_PARALLEL=2
-
 #copy MESA model files to workspace if they don't exist
 if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; then
     echo "Copying model files from bucket..."
@@ -88,7 +87,6 @@ if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; t
 else
     echo "Model files already exist, skipping download"
 fi
-
 echo "Starting PWAS analysis for phecode $PHECODE"
 echo ""
 
@@ -101,6 +99,13 @@ for POP in "${POPS[@]}"; do
         #parse MODEL and DATA from JOB
         MODEL=$(echo $JOB | awk '{print $1}')
         DATA=$(echo $JOB | awk '{print $2}')
+        
+        #skip META population for MASHR and UDR models
+        if [ "$MODEL" = "MASHR" ] || [ "$MODEL" = "UDR" ]; then
+            if [ "$POP" = "META" ]; then
+                continue
+            fi
+        fi
         
         #wait if parallel limit hit
         while [ $ACTIVE -ge $MAX_PARALLEL ]; do
@@ -119,13 +124,15 @@ for POP in "${POPS[@]}"; do
                 rm -f "$output_file"
             fi
             
-            #run S-PrediXcan - continue other runs if it fails
+            #run s-predixcan - continue other runs if it fails
             if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
                 echo ""
                 
                 #only run qqman if s-predixcan succeeded
                 if [ -f "$output_file" ]; then
-                    Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+                    if [ -f "$REPO/05pwas_qqman.R" ]; then
+                        Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+                    fi
                 else
                     echo "WARNING: Output file not found, skipping qqman plot"
                 fi
@@ -145,6 +152,6 @@ wait
 
 #deactivate conda environment
 conda deactivate
-
 echo ""
+
 echo "All analyses completed for phecode $PHECODE"
