@@ -19,7 +19,11 @@ To run the wrapper use the following command within the All of Us terminal under
 ```
 bash ~/mesa_pwas/00hail_wrapper_parallel.sh --phecode <PHECODE>
 ```
-
+- A log file will be produced for each population
+     - Check for errors or other messages that may impact data
+     - To delete all at once : `rm ~/00*.log`
+     - To delete all from one phecode: `rm ~/00*{phecode_here}*.log`
+       
 ### Running 00pwas_wrapper.sh script
 **MUST BE PERFORMED AT LEAST ONCE PRIOR TO RUNNING S-PREDIXCAN:**
 1. Create virtual machine with the following parameters (select jupyter icon on right tool bar):
@@ -48,6 +52,11 @@ bash ~/mesa_pwas/00pwas_wrapper.sh --phecode CV_404.1 --pop EUR --model EN --dat
 
 ### Running 00pwas_wrapper.sh script
 Running the 00pwas_wrapper_parallel.sh will execute scripts 4 and 5, which included running S-PrediXcan with the TOPMed MESA models and plotting the manhattan plot *for all 4 populations and models simultaneously*
+
+- A log file will be produced for each pop_model_data combination
+     - Check for unusual % SNPs used, errors, or other messages that may impact data
+     - To delete all at once: `rm ~/01*.log`
+     - To delete all from one phecode: `rm ~/01*{phecode_here}*.log`
 
 To run the wrapper use the following command within the All of Us:
 ```
