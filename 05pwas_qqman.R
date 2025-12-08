@@ -77,7 +77,7 @@ if(length(zeros) > 0) {
 merged_df$chromosome_name <- gsub("X", "23", merged_df$chromosome_name)
 
 #make chr rows numeric and remove rows with NA
-merged_df$CHR <- as.numeric(merged_df$chromosome_name)
+merged_df$chromosome_name <- as.numeric(merged_df$chromosome_name)
 merged_df <- merged_df[!is.na(merged_df$CHR), ]
 
 #double check data

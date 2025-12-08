@@ -17,6 +17,7 @@ bash ~/mesa_pwas/00install_predixcan.sh
 gsutil -m cp -r /home/claudia/models_for_pwas gs://fc-secure-915a27e9-c961-4aa0-b53f-09825278579c/data/
 
 bash ~/mesa_pwas/00pwas_wrapper.sh --phecode CV_404.1 --pop EUR --model EN --data cis_fm
+Rscript ~/mesa_pwas/05pwas_qqman.R --phecode CV_404.1 --pop EUR --model EN --data cis_fm
 
 Available Models:
 pops: META, EUR, AFR, AMR
