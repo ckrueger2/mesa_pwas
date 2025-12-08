@@ -90,7 +90,7 @@ fi
 
 #run s-predixcan - continue even if it fails
 if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
-    echo "S-PrediXcan completed successfully"
+    echo ""
     
     #only run qqman if s-prediXcan succeeded
     if [ -f "$output_file" ]; then

@@ -98,7 +98,7 @@ for POP in "${POPS[@]}"; do
             
             #run S-PrediXcan - continue other runs if it fails
             if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
-                echo "S-PrediXcan completed successfully"
+                echo ""
                 
                 #only run qqman if s-predixcan succeeded
                 if [ -f "$output_file" ]; then
