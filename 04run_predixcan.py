@@ -30,9 +30,9 @@ def main():
     get_command = "gsutil cp " + bucket + "/data/" + filename + " /tmp/"
     os.system(get_command)
 
-    #copy MESA dbfiles to workspace
-    if not os.path.exists("/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz"):
-        ret = subprocess.run(f"gsutil cp -r {bucket}/data/models_for_pwas/ /home/jupyter/", shell=True)
+    # #copy MESA dbfiles to workspace
+    # if not os.path.exists("/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz"):
+    #     ret = subprocess.run(f"gsutil cp -r {bucket}/data/models_for_pwas/ /home/jupyter/", shell=True)
     
     #assign database paths
     model_db_path = f"models_for_pwas/{args.model}/{args.data}/{args.pop}_{args.model}.db"

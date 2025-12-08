@@ -74,10 +74,27 @@ output_file="/home/jupyter/${POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.c
 #     fi
 # fi
 
-#check if the output file already exists
-if [ -f "$output_file" ]; then
-    echo "WARNING: Output file $output_file already exists. Replacing..."
-    rm -f "$output_file"
+#copy MESA model files to workspace if they don't exist
+if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; then
+    echo "Copying model files from bucket..."
+    
+    #get bucket from environment variable or use default
+    if [ -z "$WORKSPACE_BUCKET" ]; then
+        echo "WARNING: WORKSPACE_BUCKET not set in environment"
+        #try to get it from google cloud
+        BUCKET=$(gcloud config get-value project 2>/dev/null)
+        if [ -z "$BUCKET" ]; then
+            echo "ERROR: Could not determine bucket. Please set WORKSPACE_BUCKET environment variable"
+            exit 1
+        fi
+    else
+        BUCKET="$WORKSPACE_BUCKET"
+    fi
+    
+    gsutil -m cp -r ${BUCKET}/data/models_for_pwas/ /home/jupyter/
+    echo "Model files copied successfully"
+else
+    echo "Model files already exist, skipping download"
 fi
 
 # #run s-predixcan
