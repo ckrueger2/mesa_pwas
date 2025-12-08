@@ -96,11 +96,20 @@ for POP in "${POPS[@]}"; do
                 rm -f "$output_file"
             fi
             
-            #run s-predixcan
-            python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
-            
-            #plot pwas
-            Rscript "$REPO/05twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+            #run S-PrediXcan - continue other runs if it fails
+            if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
+                echo "S-PrediXcan completed successfully"
+                
+                #only run qqman if s-predixcan succeeded
+                if [ -f "$output_file" ]; then
+                    Rscript "$REPO/05twas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+                else
+                    echo "WARNING: Output file not found, skipping qqman plot"
+                fi
+            else
+                echo "ERROR: S-PrediXcan failed for $POP $MODEL $DATA (exit code $?)"
+                echo "Check log file for details: ~/${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log"
+            fi
             
         ) > ~/${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log 2>&1 &
         

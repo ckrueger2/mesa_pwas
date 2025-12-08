@@ -50,7 +50,6 @@ def main():
     --keep_non_rsid \
     --model_db_snp_key rsid \
     --throw \
-    --verbosity 9 \
     --output_file {output}"
         
     #execute the S-PrediXcan command

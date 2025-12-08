@@ -59,7 +59,7 @@ gene_coords <- getBM(
 cat("Preview of Biomart Query:\n")
 head(gene_coords)
 
-#merge twas table and biomart results 
+#merge pwas table and biomart results 
 merged_df <- left_join(df, gene_coords, by=c("gene_id" ="ensembl_gene_id"))
 head(merged_df)
 
@@ -93,10 +93,10 @@ new_suggestive_threshold <- -log10(bonferroni_threshold)
 cat("Bonferroni corrected P-value: ", bonferroni_threshold , "\n")
 
 #manhattan plot title name
-title <- paste0(args$pop, " ", args$phecode, " TWAS Manhattan Plot")
+title <- paste0(args$pop, " ", args$phecode, " PWAS Manhattan Plot")
 
 #name of saved file
-destination_filename <- paste0(args$pop, "_", args$phecode,"_twas_manhattan_", args$model, "_", args$data, ".png")
+destination_filename <- paste0(args$pop, "_", args$phecode,"_pwas_manhattan_", args$model, "_", args$data, ".png")
 
 #use qqman to plot the chromosome, location, snp, and pvalue into manhattan plot
 png(filename = destination_filename, width = 1200, height = 800, res = 100)
@@ -110,4 +110,4 @@ manhattan(merged_df,
           suggestiveline = new_suggestive_threshold)
 dev.off()
 
-cat("TWAS Manhattan plot complete\n")
+cat("PWAS Manhattan plot complete\n")

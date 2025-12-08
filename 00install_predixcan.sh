@@ -14,7 +14,7 @@ fi
 export PATH=~/miniconda3/bin:$PATH
 eval "$(conda shell.bash hook)"
 
-#accept Terms of Service for Anaconda channels
+#accept terms of service
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
@@ -30,7 +30,7 @@ if [ ! -d MetaXcan ]; then
     if [ -f software/conda_env.yaml ]; then
         conda env create -f software/conda_env.yaml
     else
-        # Fallback manual environment creation
+        #fallback manual environment creation
         conda create -n imlabtools python=3.8 numpy pandas scipy h5py -y
     fi
     cd ..
@@ -51,7 +51,7 @@ if [ ! -d MetaXcan ]; then
         conda env create -f software/conda_env.yaml
         cd ..
     else
-        # Create environment manually as fallback (version numbers may need to be changed with future updates)
+        #create environment manually as fallback (version numbers may need to be changed with future updates)
         conda create -n imlabtools python=3.8 numpy pandas scipy -y
     fi
     cd ..
