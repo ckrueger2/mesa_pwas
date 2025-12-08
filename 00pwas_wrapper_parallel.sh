@@ -52,11 +52,10 @@ bash "$REPO/00install_predixcan.sh"
 #activate conda
 source ~/miniconda3/bin/activate
 
-#create environment if needed
+#create environment with compatible versions (version numbers may need to be changed with future updates)
 if ! conda env list | grep -q imlabtools; then
-    conda create -n imlabtools python=3.8 "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
-else
-    conda install -n imlabtools "numpy<1.24" "pandas<2.0" "scipy<1.11" -y
+    # If it doesn't exist, create it
+    conda create -n imlabtools python=3.8 numpy pandas scipy -y
 fi
 
 #activate imlabtools
@@ -65,6 +64,7 @@ echo "Successfully activated imlabtools environment"
 
 #maximum number of parallel jobs
 MAX_PARALLEL=2
+
 #copy MESA model files to workspace if they don't exist
 if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; then
     echo "Copying model files from bucket..."
@@ -132,16 +132,17 @@ for POP in "${POPS[@]}"; do
                 if [ -f "$output_file" ]; then
                     if [ -f "$REPO/05pwas_qqman.R" ]; then
                         Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+                        echo "Finished: $POP $MODEL $DATA"
                     fi
                 else
                     echo "WARNING: Output file not found, skipping qqman plot"
                 fi
             else
                 echo "ERROR: S-PrediXcan failed for $POP $MODEL $DATA (exit code $?)"
-                echo "Check log file for details: ~/${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log"
+                echo "Check log file for details: ~/00${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log"
             fi
             
-        ) > ~/${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log 2>&1 &
+        ) > ~/01${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log 2>&1 &
         
         ACTIVE=$((ACTIVE + 1))
     done
@@ -152,6 +153,5 @@ wait
 
 #deactivate conda environment
 conda deactivate
-echo ""
 
 echo "All analyses completed for phecode $PHECODE"

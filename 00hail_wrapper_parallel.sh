@@ -35,7 +35,7 @@ for POP in "${POPS[@]}"; do
         echo "Starting analysis for phecode $PHECODE, population $POP..."
         /home/jupyter/mesa_pwas/00hail_wrapper.sh --phecode "$PHECODE" --pop "$POP"
         echo "Completed phecode $PHECODE, population $POP"
-    ) &
+    ) > ~/00${POP}_${PHECODE}_${MODEL}_${DATA}_hail.log 2>&1 &
 done
 
 #wait for all background jobs to complete

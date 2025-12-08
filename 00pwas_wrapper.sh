@@ -59,21 +59,6 @@ fi
 
 output_file="/home/jupyter/${POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.csv"
 
-# #check if the output file already exists
-# if [ -f "$output_file" ]; then
-#     echo "WARNING: Output file $output_file already exists."
-#     read -p "Press ENTER to replace it, or type 'n' to cancel: " response
-#     
-#     if [[ $response =~ ^[Nn]$ ]]; then
-#         echo "Operation cancelled by user."
-#         exit 1
-#     else
-#         # Delete the file
-#         rm -f "$output_file"
-#         echo "Existing file has been deleted."
-#     fi
-# fi
-
 #copy MESA model files to workspace if they don't exist
 if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; then
     echo "Copying model files from bucket..."
@@ -97,16 +82,8 @@ else
     echo "Model files already exist, skipping download"
 fi
 
-# #run s-predixcan
-# PREDIXCAN_CMD="python $REPO/04run_predixcan.py --phecode \"$PHECODE\" --pop \"$POP\" --model \"$MODEL\" --data \"$DATA\""
-# 
-# eval $PREDIXCAN_CMD
-# 
-# #run qqman on twas sum stats
-# Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
-
 #run s-predixcan - continue even if it fails
-if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
+if python $REPO/04run_predixcan_filtered.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
     echo ""
     
     #only run qqman if s-prediXcan succeeded
