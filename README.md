@@ -40,6 +40,9 @@ bash ~/mesa_pwas/00hail_wrapper_parallel.sh --phecode <PHECODE>
 
 To run the wrapper use the following command within the All of Us:
 ```
+bash ~/mesa_pwas/00pwas_wrapper.sh --phecode <PHECODE> --pop <POP> --model <MODEL> --data <DATA>
+
+#example:
 bash ~/mesa_pwas/00pwas_wrapper.sh --phecode CV_404.1 --pop EUR --model EN --data cis_fm
 ```
 
