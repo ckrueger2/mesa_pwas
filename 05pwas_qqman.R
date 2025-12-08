@@ -106,7 +106,7 @@ manhattan(merged_df,
           snp = "gene_name", 
           p = "pvalue",
           main = title,
-          col = c("olivedrab3", "olivedrab4"),
+          col = c("darkolivegreen3", "darkolivegreen"),
           suggestiveline = new_suggestive_threshold)
 dev.off()
 
