@@ -77,7 +77,7 @@ for(file in files) {
 merged_results <- rbindlist(all_results, fill = TRUE)
 
 #write merged output
-output_file <- paste0("merged_significant_results_", args.phecode, ".tsv")
+output_file <- paste0("merged_significant_results_", args$phecode, ".tsv")
 write.table (merged_results, output_file, row.names=FALSE, quote=FALSE, sep="\t")
 
 #find bucket
