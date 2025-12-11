@@ -85,3 +85,5 @@ my_bucket <- Sys.getenv('WORKSPACE_BUCKET')
 
 #copy the file from current workspace to the bucket
 system(paste0("gsutil cp ./", output_file, " ", my_bucket, "/data/"), intern=TRUE)
+
+cat("Download /home/jupyter/merged_siginificant_results_{phecode}.tsv and upload to excel file\n")
