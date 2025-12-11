@@ -5,7 +5,7 @@ Installing pipeline in All of Us:
 `git clone https://github.com/ckrueger2/mesa_pwas`
 
 ### Running 00hail_wrapper.sh script
-Running the 00hail_wrapper.sh will execute scripts 1 through 3, which include pulling GWAS summary statistics, formatting them, and ploting the manhattan plot
+Running 00hail_wrapper.sh will execute scripts 1 through 3, which include pulling GWAS summary statistics, formatting them, and ploting the manhattan plot
 
 To run the wrapper use the following command within the All of Us terminal under the Hail Table Environment:
 ```
@@ -13,7 +13,7 @@ bash ~/mesa_pwas/00hail_wrapper.sh --phecode <PHECODE> --pop <POP>
 ```
 
 ### Running 00hail_wrapper_parallel.sh script
-Running the 00hail_wrapper_parallel.sh will execute scripts 1 through 3, which include pulling GWAS summary statistics, formatting them, and ploting the manhattan plot *for all 4 populations simultaneously*
+Running 00hail_wrapper_parallel.sh will execute scripts 1 through 3, which include pulling GWAS summary statistics, formatting them, and ploting the manhattan plot *for all 4 populations simultaneously*
 
 To run the wrapper use the following command within the All of Us terminal under the Hail Table Environment:
 ```
@@ -51,7 +51,7 @@ bash ~/mesa_pwas/00pwas_wrapper.sh --phecode CV_404.1 --pop EUR --model EN --dat
 ```
 
 ### Running 00pwas_wrapper.sh script
-Running the 00pwas_wrapper_parallel.sh will execute scripts 4 and 5, which included running S-PrediXcan with the TOPMed MESA models and plotting the manhattan plot *for all 4 populations and models simultaneously*
+Running 00pwas_wrapper_parallel.sh will execute scripts 4 and 5, which included running S-PrediXcan with the TOPMed MESA models and plotting the manhattan plot *for all 4 populations and models simultaneously*
 
 - A log file will be produced for each pop_model_data combination
      - Check for unusual % SNPs used, errors, or other messages that may impact data
@@ -61,6 +61,16 @@ Running the 00pwas_wrapper_parallel.sh will execute scripts 4 and 5, which inclu
 To run the wrapper use the following command within the All of Us:
 ```
 bash ~/mesa_pwas/00pwas_wrapper_parallel.sh --phecode <PHECODE>
+```
+
+### Running 06format_output.R script
+Runnning 06format_output.R will compile all predixcan-output files and filter by the respective pvalue threshold, producing one filtered file
+
+- Please download this final file and upload it to its own page in the shared excel file
+
+To run the script use the following command within the All of Us:
+```
+bash ~/mesa_pwas/06format_output.sh --phecode <PHECODE>
 ```
 
 ### Long runtime solutions
