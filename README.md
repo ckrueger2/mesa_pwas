@@ -50,7 +50,7 @@ bash ~/mesa_pwas/00pwas_wrapper.sh --phecode <PHECODE> --pop <POP> --model <MODE
 bash ~/mesa_pwas/00pwas_wrapper.sh --phecode CV_404.1 --pop EUR --model EN --data cis_fm
 ```
 
-### Running 00pwas_wrapper.sh script
+### Running 00pwas_wrapper_parallel.sh script
 Running 00pwas_wrapper_parallel.sh will execute scripts 4 and 5, which included running S-PrediXcan with the TOPMed MESA models and plotting the manhattan plot *for all 4 populations and models simultaneously*
 
 - A log file will be produced for each pop_model_data combination
