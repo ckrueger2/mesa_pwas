@@ -34,7 +34,6 @@ command2 <- paste0("gsutil cat ", my_bucket, "/data/predixcan_models_varids-effa
 system(command2)
 
 #format reference file
-# system("awk -F'[,:]' 'NR>1 {print $1\":\"$2}' /tmp/predixcan_models_varids-effallele_mesa", args$pop, ".txt > /tmp/chrpos_allele_table", args$pop, ".tsv", intern=TRUE)
 command3 <- paste0(
   "awk -F'[,:]' 'NR>1 {print $1\":\"$2}' /tmp/predixcan_models_varids-effallele_mesa", args$pop, ".txt > /tmp/chrpos_allele_table", args$pop, ".tsv")
 system(command3)
