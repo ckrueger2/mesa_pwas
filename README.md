@@ -65,9 +65,9 @@ bash ~/mesa_pwas/00pwas_wrapper_parallel.sh --phecode <PHECODE>
 ```
 
 ### Running 06format_output.R script
-Runnning 06format_output.R will compile all predixcan-output files and filter by the respective pvalue threshold, producing one filtered file
+Runnning 06format_output.R will compile all predixcan-output files and filter by the respective bonferroni and <0.05 thresholds, producing one filtered file for each. It will create a third file that lists the bonferonni thresholds for each pop/model/data combination. *(merged_significant_results_bcorr_{phecode}.tsv, merged_significant_results_p05_{phecode}.tsv, bonferroni_thresholds_{phecode}.txt)*
 
-- Please download this final file and upload it to its own page in the shared excel file
+- Please download the final bcorr and p05 files and upload it to its own page in the shared excel file
 
 To run the script use the following command within the All of Us:
 ```
