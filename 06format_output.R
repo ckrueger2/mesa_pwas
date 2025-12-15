@@ -5,13 +5,13 @@ library(argparse)
 
 #set up argparse
 parser <- ArgumentParser()
-parser$add_argument("--phecode", help="all of us phenotype ID (e.g., CV_401.1)")
+parser$add_argument("--phecode", help="all of us phenotype ID")
 args <- parser$parse_args()
 
 #build file read in patterns - updated for new naming convention
 phecode_escaped <- gsub("\\.", "\\\\.", args$phecode)
-pattern <- paste0('gwas_.*_db_.*_predixcan_output_', phecode_escaped, '_.*\\.csv$')
-dir <- "~/"
+pattern <- paste0("gwas_.*_db_.*_predixcan_output_.*_", phecode_escaped, "_.*\\.csv$")
+dir <- "/home/jupyter"
 files <- list.files(dir, pattern = pattern)
 
 cat("Number of files found:", length(files), "\n\n")
