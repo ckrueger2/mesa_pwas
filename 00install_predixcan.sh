@@ -26,40 +26,17 @@ conda config --add channels conda-forge
 #clone MetaXcan repo if needed
 if [ ! -d MetaXcan ]; then
     git clone https://github.com/hakyimlab/MetaXcan
-    cd MetaXcan
-    if [ -f software/conda_env.yaml ]; then
-        conda env create -f software/conda_env.yaml
-    else
-        #fallback manual environment creation
-        conda create -n imlabtools python=3.8 numpy pandas scipy h5py -y
-    fi
-    cd ..
 fi
 
-#create imlabtools manually if not created yet
-if ! conda env list | grep -q imlabtools; then
-    echo "Creating imlabtools environment manually..."
-    conda create -n imlabtools python=3.8 numpy pandas scipy h5py -y
+#create or recreate imlabtools environment with compatible versions
+if conda env list | grep -q imlabtools; then
+    echo "imlabtools environment exists, checking NumPy version..."
+    conda activate imlabtools
+    # Fix NumPy version if needed
+    conda install "numpy<2.0" scipy=1.10.1 -y
+else
+    echo "Creating imlabtools environment with compatible package versions..."
+    conda create -n imlabtools python=3.8 "numpy<2.0" pandas scipy=1.10.1 h5py -y
 fi
 
-#clone repo and create environment
-if [ ! -d MetaXcan ]; then
-    git clone https://github.com/hakyimlab/MetaXcan
-    cd MetaXcan
-    #git checkout 76a11b856f3cbab0b866033d518c201374a5594b
-    if [ -f MetaXcan/software/conda_env.yaml ]; then
-        conda env create -f software/conda_env.yaml
-        cd ..
-    else
-        #create environment manually as fallback (version numbers may need to be changed with future updates)
-        conda create -n imlabtools python=3.8 numpy pandas scipy -y
-    fi
-    cd ..
-fi
-
-#create imlabtools manually if needed (version numbers may need to be changed with future updates)
-if ! conda env list | grep -q imlabtools; then
-    echo "Failed to create imlabtools environment, creating manually"
-    conda create -n imlabtools python=3.8 numpy pandas scipy h5py -y
-fi
 echo "Setup complete. Activate with: conda activate imlabtools"
