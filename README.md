@@ -78,5 +78,7 @@ bash ~/mesa_pwas/06format_output.sh --phecode <PHECODE>
 ### Long runtime solutions
 - I havent implemented nohup - please give it a shot if you'd like and let me know if you get it to work with the kernel quit
 - I use the app 'Amphetamine' (from Apple app store for mac) to keep my screen on and leave my computer on a charger
-- I set my automatically pause after idle to 8 hours (default is 30 minutes) *this must be done when building environment*
-<img width="665" height="434" alt="Screenshot 2025-12-06 at 5 03 12 PM" src="https://github.com/user-attachments/assets/4d2740ea-32cf-4674-9f9b-3aa797257225" />
+- I set my automatically pause after idle to 5 days (default is 30 minutes) *this must be done when building environment*
+  - Be sure to pause environment when not running or change this after running so we dont spend all of Dr. Wheeler's money
+<img width="657" height="426" alt="Screenshot 2025-12-15 at 12 41 25 PM" src="https://github.com/user-attachments/assets/06d1a9d2-c531-4026-8042-9228b99b082a" />
+
