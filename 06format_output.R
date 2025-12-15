@@ -9,9 +9,7 @@ parser$add_argument("--phecode", help="all of us phenotype ID")
 args <- parser$parse_args()
 
 #build file read in patterns - updated for new naming convention
-phecode_escaped <- paste0("\\Q", args$phecode, "\\E")
-pattern <- paste0("gwas_.*_db_.*_predixcan_output_.*_", phecode_escaped, "_.*\\.csv$")
-cat(pattern, "\n")
+pattern <- paste0("gwas_*_db_*_predixcan_output_", args$phecode, "_*\\.csv$")
 files <- list.files("/home/jupyter", pattern = pattern)
 cat("Number of files found:", length(files), "\n\n")
 
