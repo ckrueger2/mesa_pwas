@@ -33,7 +33,7 @@ threshold_summary <- data.frame(
 for(file in files) {
   
   #read in file
-  f <- fread(paste0("home/jupyter/", file))
+  f <- fread(paste0("/home/jupyter/", file))
   
   #calculate Bonferroni threshold for THIS file
   n_genes <- nrow(f)
