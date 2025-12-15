@@ -99,7 +99,7 @@ threshold_file <- paste0("bonferroni_thresholds_", args$phecode, ".txt")
 
 write.table(merged_results, output_file, row.names=FALSE, quote=FALSE, sep="\t")
 write.table(merged_results_p05, output_file_p05, row.names=FALSE, quote=FALSE, sep="\t")
-write.table(threshold_summary, threshold_file, row.names=FALSE, quote=FALSE, sep=" ")
+write.table(threshold_summary, threshold_file, row.names=FALSE, quote=FALSE, sep="\t")
 
 #find bucket
 my_bucket <- Sys.getenv('WORKSPACE_BUCKET')
