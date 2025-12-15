@@ -2,7 +2,7 @@
 
 #command
 usage() {
-    echo "Usage: $0 --phecode <PHECODE> --pop <POP> --model <MODEL> --data <DATA>"
+    echo "Usage: $0 --phecode <PHECODE> --pop_gwas <POP_GWAS> --pop_db <POP_DB> --model <MODEL> --data <DATA>"
     exit 1
 }
 
@@ -13,8 +13,12 @@ while [[ $# -gt 0 ]]; do
             PHECODE=$2
             shift 2
             ;;
-        --pop)
-            POP=$2
+        --pop_gwas)
+            POP_GWAS=$2
+            shift 2
+            ;;
+        --pop_db)
+            POP_DB=$2
             shift 2
             ;;
         --model)
@@ -33,7 +37,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 #check for required arguments
-if [[ -z "$PHECODE" || -z "$POP" || -z "$MODEL" || -z "$DATA" ]]; then
+if [[ -z "$PHECODE" || -z "$POP_GWAS" || -z "$POP_DB" || -z "$MODEL" || -z "$DATA" ]]; then
+    echo "ERROR: Missing required arguments"
     usage
 fi
 
@@ -86,20 +91,22 @@ if [ -f "$output_file" ]; then
     echo "WARNING: Output file $output_file already exists. Replacing..."
     rm -f "$output_file"
 fi
-            
+     
+echo "Running PWAS for GWAS=$POP_GWAS x DB=$POP_DB | $MODEL $DATA"
+
 #run s-predixcan - continue even if it fails
-if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
+if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop_gwas "$POP_GWAS" --pop_db "$POP_DB" --model "$MODEL" --data "$DATA"; then
     echo ""
     
     #only run qqman if s-prediXcan succeeded
     if [ -f "$output_file" ]; then
-        Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
+        Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop_gwas "$POP_GWAS" --pop_db "$POP_DB" --model "$MODEL" --data "$DATA"
     else
         echo "WARNING: Output file not found, skipping qqman plot"
     fi
 else
-    echo "ERROR: S-PrediXcan failed for $POP $MODEL $DATA (exit code $?)"
-    echo "Check log file for details: ~/${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log"
+    echo "ERROR: S-PrediXcan failed for GWAS=$POP_GWAS x DB=$POP_DB | $MODEL $DATA (exit code $?)"
+    echo "Check log file for details: ~/gwas_${POP_GWAS}_db_${POP_DB}_${PHECODE}_${MODEL}_${DATA}_pwas.log"
 fi
 
 #deactivate imlabtools

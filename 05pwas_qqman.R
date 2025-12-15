@@ -19,36 +19,39 @@ library(argparse)
 #set up argparse
 parser <- ArgumentParser()
 parser$add_argument("--phecode", help="all of us phenotype ID")
-parser$add_argument("--pop", help="all of us population ID")
-parser$add_argument("--model", help="pwas training model")
-parser$add_argument("--data", help="pwas data type")
+parser$add_argument("--pop_gwas", help="GWAS population (META, EUR, AFR, AMR)")
+parser$add_argument("--pop_db", help="database/model population (META, EUR, AFR, AMR)")
+parser$add_argument("--model", help="pwas training model (EN, MASHR, UDR)")
+parser$add_argument("--data", help="pwas data type (cis, cis_fm, trans, trans_fm, cistrans_fm)")
 
 args <- parser$parse_args()
 
 #get the bucket name
 my_bucket <- Sys.getenv('WORKSPACE_BUCKET')
 
-#pull file from bucket
-name_of_file_in_bucket <- paste0(args$pop, "_predixcan_output_", args$phecode, "_", args$model, "_", args$data, ".csv")
+#pull file from bucket with new naming convention
+name_of_file_in_bucket <- paste0("gwas_", args$pop_gwas, "_db_", args$pop_db, 
+                                 "_predixcan_output_", args$phecode, "_", 
+                                 args$model, "_", args$data, ".csv")
 read_in_command <- paste0("gsutil cp ", my_bucket, "/data/", name_of_file_in_bucket, " .")
 
 #copy file from the bucket to the current workspace
 system(read_in_command, intern=TRUE)
 df <- fread(name_of_file_in_bucket, sep = ",", header=TRUE)
 
-#accessing the Ensembl biomart database for 'genes', specifically the human genes version 113 (can be changed or left out)
+#accessing the Ensembl biomart database for 'genes', specifically the human genes version 113
 biomart_access <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")
 
 #removes the decimal after the gene, helps with merging and searching in general 
 #this doesnt rename the gene, instead creates a new column so we dont lose data
 df$gene_id <- sub("\\..*", "", df$gene)
 
-#head to see the data and make sure it was read correctly 
-cat("Preview of S-PrediXcan output \n")
-head(df, 10)
+#preview the data
+cat("Preview of S-PrediXcan output:\n")
+print(head(df, 5))
 
 #use biomart to pull chromosomal location information 
-#we need the gene_id to find it, the chromosomal name (chromosome), the start position and end position (we will only use start) and what the gene is called in the database
+cat("\nQuerying BioMart for gene coordinates...\n")
 gene_coords <- getBM(
   attributes = c("ensembl_gene_id", "chromosome_name", "start_position", "end_position", "external_gene_name"),
   filters = "ensembl_gene_id",
@@ -56,12 +59,8 @@ gene_coords <- getBM(
   mart = biomart_access
 )
 
-cat("Preview of Biomart Query:\n")
-head(gene_coords)
-
 #merge pwas table and biomart results 
-merged_df <- left_join(df, gene_coords, by=c("gene_id" ="ensembl_gene_id"))
-head(merged_df)
+merged_df <- left_join(df, gene_coords, by=c("gene_id" = "ensembl_gene_id"))
 
 #make p column is numeric and handle NA p-values and 0s
 merged_df$P <- as.numeric(merged_df$pvalue)
@@ -71,6 +70,7 @@ zeros <- which(merged_df$P == 0)
 merged_df <- merged_df %>% filter(!is.na(chromosome_name) & !is.na(start_position) & !is.na(P))
 if(length(zeros) > 0) {
   merged_df$P[merged_df$P == 0] <- 1e-300
+  cat("Adjusted", length(zeros), "zero p-values to 1e-300\n")
 }
 
 #ensure X chromosome coded as 23
@@ -80,26 +80,28 @@ merged_df$chromosome_name <- gsub("X", "23", merged_df$chromosome_name)
 merged_df$CHR <- as.numeric(merged_df$chromosome_name)
 merged_df <- merged_df[!is.na(merged_df$CHR), ]
 
-#double check data
-cat("Preview of BioMart merged table \n")
-head(merged_df, 10)
-
 #finding sample size to calculate threshold
 sample_size <- nrow(df)
 
-#calculate the new bonferroni and threshold based on sample size 
+#calculate the new bonferroni threshold based on sample size 
 bonferroni_threshold <- 0.05 / sample_size
 new_suggestive_threshold <- -log10(bonferroni_threshold)
-cat("Bonferroni corrected P-value: ", bonferroni_threshold , "\n")
+cat("\nBonferroni corrected P-value:", bonferroni_threshold, "\n")
+cat("Suggestive line (-log10):", new_suggestive_threshold, "\n\n")
 
-#manhattan plot title name
-title <- paste0(args$pop, " ", args$phecode, " PWAS Manhattan Plot")
+#manhattan plot title name - now includes both populations
+title <- paste0("GWAS: ", args$pop_gwas, " × DB: ", args$pop_db, 
+                "\n", args$phecode, " PWAS Manhattan Plot (", 
+                args$model, " - ", args$data, ")")
 
 #name of saved file
-destination_filename <- paste0(args$pop, "_", args$phecode,"_pwas_manhattan_", args$model, "_", args$data, ".png")
+destination_filename <- paste0("gwas_", args$pop_gwas, "_db_", args$pop_db, "_", 
+                               args$phecode, "_pwas_manhattan_", 
+                               args$model, "_", args$data, ".png")
 
 #use qqman to plot the chromosome, location, snp, and pvalue into manhattan plot
-png(filename = destination_filename, width = 1200, height = 800, res = 100)
+cat("Generating Manhattan plot...\n")
+png(filename = destination_filename, width = 1400, height = 900, res = 120)
 manhattan(merged_df, 
           chr = "CHR", 
           bp = "start_position", 
@@ -107,7 +109,9 @@ manhattan(merged_df,
           p = "pvalue",
           main = title,
           col = c("darkolivegreen3", "darkolivegreen"),
-          suggestiveline = new_suggestive_threshold)
+          suggestiveline = new_suggestive_threshold,
+          cex.main = 0.9)
 dev.off()
 
-cat("PWAS Manhattan plot complete\n")
+cat("PWAS Manhattan plot saved:", destination_filename, "\n")
+cat("Analysis complete!\n")
