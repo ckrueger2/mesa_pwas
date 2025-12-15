@@ -54,7 +54,7 @@ for(file in files) {
   
   #extract the method and data type from filename
   #remove prefix up to and including the phecode
-  remainder <- sub(paste0(".*_predixcan_output_", phecode_escaped, "_"), "", file)
+  remainder <- sub(paste0(".*_predixcan_output_", args$phecode, "_"), "", file)
   #remove .csv extension
   remainder <- gsub("\\.csv$", "", remainder)
   
