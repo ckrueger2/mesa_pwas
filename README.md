@@ -1,4 +1,5 @@
 # mesa_pwas
+For more detailed set up info, take a look at the wiki from this github: https://github.com/bmoginot/GWAS-TWAS-in-All-of-Us-Cloud
 ***
 
 Installing pipeline in All of Us:   
@@ -27,7 +28,7 @@ bash ~/mesa_pwas/00hail_wrapper_parallel.sh --phecode <PHECODE>
 ### Running 00pwas_wrapper.sh script
 **MUST BE PERFORMED AT LEAST ONCE PRIOR TO RUNNING S-PREDIXCAN:**
 1. Create virtual machine with the following parameters (select jupyter icon on right tool bar):
-   - Select `Hail Genomics Analysis` under `Recomended environments` drop down
+   - Select `Hail Genomics Analysis` under `Recomended environments` drop down *- remember you must have a controlled workspace to use hail*
    - Select `16` under `Cloud compute profile CPUs`
    - Select `60` under `Cloud compute profile RAM (GB)`
 2. Run in AoU terminal: `gsutil ls` to find bucket name -> ex. `gs://fc-secure-d80c2561-4630-4343-ab98-9fb7fcc9c21b`
