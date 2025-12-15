@@ -24,8 +24,9 @@ if [[ -z "$PHECODE" ]]; then
     usage
 fi
 
-#define populations
-POPS=("META" "EUR" "AFR" "AMR")
+#define populations for both GWAS data and DB models
+GWAS_POPS=("META" "EUR" "AFR" "AMR")
+DB_POPS=("META" "EUR" "AFR" "AMR")
 
 #define model-data combinations
 declare -a JOBS=(
@@ -87,64 +88,68 @@ if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; t
 else
     echo "Model files already exist, skipping download"
 fi
+
 echo "Starting PWAS analysis for phecode $PHECODE"
+echo "Running all GWAS population x DB population combinations"
 echo ""
 
 #counter for active jobs
 ACTIVE=0
 
-#loop through all combinations
-for POP in "${POPS[@]}"; do
-    for JOB in "${JOBS[@]}"; do
-        #parse MODEL and DATA from JOB
-        MODEL=$(echo $JOB | awk '{print $1}')
-        DATA=$(echo $JOB | awk '{print $2}')
-        
-        #skip META population for MASHR and UDR models
-        if [ "$MODEL" = "MASHR" ] || [ "$MODEL" = "UDR" ]; then
-            if [ "$POP" = "META" ]; then
-                continue
-            fi
-        fi
-        
-        #wait if parallel limit hit
-        while [ $ACTIVE -ge $MAX_PARALLEL ]; do
-            wait -n  #wait for any job to finish
-            ACTIVE=$((ACTIVE - 1))
-        done
-        
-        #launch job
-        echo "Starting: $POP $MODEL $DATA"
-        (
-            output_file="/home/jupyter/${POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.csv"
+#loop through all combinations: GWAS pop x DB pop x MODEL x DATA
+for GWAS_POP in "${GWAS_POPS[@]}"; do
+    for DB_POP in "${DB_POPS[@]}"; do
+        for JOB in "${JOBS[@]}"; do
+            #parse MODEL and DATA from JOB
+            MODEL=$(echo $JOB | awk '{print $1}')
+            DATA=$(echo $JOB | awk '{print $2}')
             
-            #check if output file already exists
-            if [ -f "$output_file" ]; then
-                echo "WARNING: Output file $output_file already exists. Replacing..."
-                rm -f "$output_file"
+            #skip META population for MASHR and UDR models (DB side)
+            if [ "$MODEL" = "MASHR" ] || [ "$MODEL" = "UDR" ]; then
+                if [ "$DB_POP" = "META" ]; then
+                    continue
+                fi
             fi
             
-            #run s-predixcan - continue other runs if it fails
-            if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"; then
-                echo ""
+            #wait if parallel limit hit
+            while [ $ACTIVE -ge $MAX_PARALLEL ]; do
+                wait -n  #wait for any job to finish
+                ACTIVE=$((ACTIVE - 1))
+            done
+            
+            #launch job
+            echo "Starting: GWAS=$GWAS_POP x DB=$DB_POP | $MODEL $DATA"
+            (
+                output_file="/home/jupyter/gwas_${GWAS_POP}_db_${DB_POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.csv"
                 
-                #only run qqman if s-predixcan succeeded
+                #check if output file already exists
                 if [ -f "$output_file" ]; then
-                    if [ -f "$REPO/05pwas_qqman.R" ]; then
-                        Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop "$POP" --model "$MODEL" --data "$DATA"
-                        echo "Finished: $POP $MODEL $DATA"
+                    echo "WARNING: Output file $output_file already exists. Replacing..."
+                    rm -f "$output_file"
+                fi
+                
+                #run s-predixcan - continue other runs if it fails
+                if python $REPO/04run_predixcan.py --phecode "$PHECODE" --pop_gwas "$GWAS_POP" --pop_db "$DB_POP" --model "$MODEL" --data "$DATA"; then
+                    echo ""
+                    
+                    #only run qqman if s-predixcan succeeded
+                    if [ -f "$output_file" ]; then
+                        if [ -f "$REPO/05pwas_qqman.R" ]; then
+                            Rscript "$REPO/05pwas_qqman.R" --phecode "$PHECODE" --pop_gwas "$GWAS_POP" --pop_db "$DB_POP" --model "$MODEL" --data "$DATA"
+                            echo "Finished: GWAS=$GWAS_POP x DB=$DB_POP | $MODEL $DATA"
+                        fi
+                    else
+                        echo "WARNING: Output file not found, skipping qqman plot"
                     fi
                 else
-                    echo "WARNING: Output file not found, skipping qqman plot"
+                    echo "ERROR: S-PrediXcan failed for GWAS=$GWAS_POP x DB=$DB_POP | $MODEL $DATA (exit code $?)"
+                    echo "Check log file for details: ~/00gwas_${GWAS_POP}_db_${DB_POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log"
                 fi
-            else
-                echo "ERROR: S-PrediXcan failed for $POP $MODEL $DATA (exit code $?)"
-                echo "Check log file for details: ~/00${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log"
-            fi
+                
+            ) > ~/01gwas_${GWAS_POP}_db_${DB_POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log 2>&1 &
             
-        ) > ~/01${POP}_${PHECODE}_${MODEL}_${DATA}_pwas.log 2>&1 &
-        
-        ACTIVE=$((ACTIVE + 1))
+            ACTIVE=$((ACTIVE + 1))
+        done
     done
 done
 
@@ -155,3 +160,4 @@ wait
 conda deactivate
 
 echo "All analyses completed for phecode $PHECODE"
+echo "Total combinations run: GWAS pops (4) x DB pops (4 for EN, 3 for MASHR/UDR) x Models/Data"

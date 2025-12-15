@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-
 import os
 import sys
 import argparse
 import subprocess
 
 def set_args():
-    parser = argparse.ArgumentParser(description="run s-predixcan")
+    parser = argparse.ArgumentParser(description="run s-predixcan with cross-population analysis")
     parser.add_argument("--phecode", help="phecode", required=True)
-    parser.add_argument("--pop", help="population", required=True)
+    parser.add_argument("--pop_gwas", help="population for GWAS data (META, EUR, AFR, AMR)", required=True)
+    parser.add_argument("--pop_db", help="population for database/model (META, EUR, AFR, AMR)", required=True)
     parser.add_argument("--model", help="EN, MASHR, or UDR", required=True)
     parser.add_argument("--data", help="cis, cis_fm, trans, trans_fm, cistrans_fm", required=True)
     return parser
@@ -19,24 +19,41 @@ def main():
     
     #define paths
     bucket = os.getenv('WORKSPACE_BUCKET')
-    output = f"/home/jupyter/{args.pop}_predixcan_output_{args.phecode}_{args.model}_{args.data}.csv"
+    output = f"/home/jupyter/gwas_{args.pop_gwas}_db_{args.pop_db}_predixcan_output_{args.phecode}_{args.model}_{args.data}.csv"
     
     #python and metaxcan paths
     python_path = sys.executable
     metaxcan_dir = "/home/jupyter/MetaXcan"
-
-    #retrieve MESA filtered file from bucket
-    filename = args.pop + "_formatted_mesa_" + args.phecode + ".tsv"
-    get_command = "gsutil cp " + bucket + "/data/" + filename + " /tmp/"
-    os.system(get_command)
-
-    # #copy MESA dbfiles to workspace
-    # if not os.path.exists("/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz"):
-    #     ret = subprocess.run(f"gsutil cp -r {bucket}/data/models_for_pwas/ /home/jupyter/", shell=True)
     
-    #assign database paths
-    model_db_path = f"models_for_pwas/{args.model}/{args.data}/{args.pop}_{args.model}.db"
-    covariance_path = f"models_for_pwas/{args.model}/{args.data}/{args.pop}_{args.model}_covariances.txt.gz"
+    #retrieve MESA formatted file from bucket (using GWAS population)
+    filename = args.pop_gwas + "_formatted_mesa_" + args.phecode + ".tsv"
+    get_command = "gsutil cp " + bucket + "/data/" + filename + " /tmp/"
+    print(f"Downloading GWAS data: {filename}")
+    ret = os.system(get_command)
+    
+    if ret != 0:
+        print(f"ERROR: Failed to download GWAS file {filename}")
+        sys.exit(1)
+    
+    #assign database paths (using DB population)
+    model_db_path = f"models_for_pwas/{args.model}/{args.data}/{args.pop_db}_{args.model}.db"
+    covariance_path = f"models_for_pwas/{args.model}/{args.data}/{args.pop_db}_{args.model}_covariances.txt.gz"
+    
+    #verify database files exist
+    if not os.path.exists(model_db_path):
+        print(f"ERROR: Model database not found: {model_db_path}")
+        sys.exit(1)
+    if not os.path.exists(covariance_path):
+        print(f"ERROR: Covariance file not found: {covariance_path}")
+        sys.exit(1)
+    
+    print(f"\nRunning S-PrediXcan:")
+    print(f"  GWAS Population: {args.pop_gwas}")
+    print(f"  DB Population:   {args.pop_db}")
+    print(f"  Model:           {args.model}")
+    print(f"  Data:            {args.data}")
+    print(f"  Phecode:         {args.phecode}\n")
+    
     #command without optional parameters
     cmd = f"{python_path} {metaxcan_dir}/software/SPrediXcan.py \
     --gwas_file /tmp/{filename} \
@@ -53,22 +70,28 @@ def main():
     --output_file {output}"
         
     #execute the S-PrediXcan command
-    print("Running S-PrediXcan...")
+    print("Executing S-PrediXcan...")
     exit_code = os.system(cmd)
     
     if exit_code != 0:
         print(f"ERROR: SPrediXcan.py failed with exit code {exit_code}")
-        return
+        #clean up tmp files
+        os.system(f"rm -rf /tmp/{filename} 2>/dev/null")
+        sys.exit(exit_code)
     
     #upload the results back to the bucket
     set_file = f"gsutil cp {output} {bucket}/data/"
-    print(f"Uploading results: {set_file}")
-    os.system(set_file)
-
+    print(f"\nUploading results: {output}")
+    upload_ret = os.system(set_file)
+    
+    if upload_ret != 0:
+        print(f"WARNING: Failed to upload results to bucket")
+    
     #clean up tmp files if they exist
     os.system(f"rm -rf /tmp/{filename} 2>/dev/null")
         
-    print("S-PrediXcan analysis completed successfully")
+    print(f"\nS-PrediXcan analysis completed successfully")
+    print(f"Output file: {output}")
 
 if __name__ == "__main__":
     main()
