@@ -20,6 +20,7 @@ thresholds <- fread("~/mesa_pwas/significance_thresholds.txt")
 
 #initialize empty list
 all_results <- list()
+all_results_p05 <- list()
 
 #parse through files
 for(file in files) {
@@ -67,23 +68,37 @@ for(file in files) {
     filter(pvalue < threshold_val) %>%
     mutate(model = type_string)
   
+  #filter by p < 0.05
+  filtered_p05 <- f %>%
+    select(gene, gene_name, zscore, effect_size, pvalue, var_g, pred_perf_r2, pred_perf_pval, pred_perf_qval, n_snps_used, n_snps_in_cov, n_snps_in_model) %>%
+    filter(pvalue < 0.05) %>%
+    mutate(model = type_string)
+  
   #add to results list
   if(nrow(filtered) > 0) {
     all_results[[type_string]] <- filtered
+  }
+  if(nrow(filtered_p05) > 0) {
+    all_results_p05[[type_string]] <- filtered_p05
   }
 }
 
 #combine all results into one table
 merged_results <- rbindlist(all_results, fill = TRUE)
+merged_results_p05 <- rbindlist(all_results_p05, fill = TRUE)
 
 #write merged output
-output_file <- paste0("merged_significant_results_", args$phecode, ".tsv")
+output_file <- paste0("merged_significant_results_bcorr", args$phecode, ".tsv")
+output_file_p05 <- paste0("merged_significant_results_p05_", args$phecode, ".tsv")
+
 write.table (merged_results, output_file, row.names=FALSE, quote=FALSE, sep="\t")
+write.table(merged_results_p05, output_file_p05, row.names=FALSE, quote=FALSE, sep="\t")
 
 #find bucket
 my_bucket <- Sys.getenv('WORKSPACE_BUCKET')
 
 #copy the file from current workspace to the bucket
 system(paste0("gsutil cp ./", output_file, " ", my_bucket, "/data/"), intern=TRUE)
+system(paste0("gsutil cp ./", output_file_p05, " ", my_bucket, "/data/"), intern=TRUE)
 
-cat("Download /home/jupyter/merged_siginificant_results_{phecode}.tsv and upload to excel file\n")
+cat("Download /home/jupyter/merged_siginificant_results_{phecode}_{bcorr and p05}.tsv and upload to excel file\n")
