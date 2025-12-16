@@ -30,7 +30,7 @@ fi
 
 #create or recreate imlabtools environment with compatible versions
 if conda env list | grep -q imlabtools; then
-    echo "imlabtools environment exists, checking NumPy version..."
+    echo "imlabtools environment exists, activating..."
     conda activate imlabtools
     # Fix NumPy version if needed
     conda install "numpy<2.0" scipy=1.10.1 -y
