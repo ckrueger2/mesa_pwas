@@ -72,7 +72,7 @@ Runnning 06format_output.R will compile all predixcan-output files and filter by
 
 To run the script use the following command within the All of Us:
 ```
-bash ~/mesa_pwas/06format_output.sh --phecode <PHECODE>
+Rscript ~/mesa_pwas/06format_output.R --phecode <PHECODE>
 ```
 
 ### Long runtime solutions
