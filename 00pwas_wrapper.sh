@@ -62,7 +62,7 @@ if conda activate imlabtools; then
     echo "Successfully activated imlabtools environment"
 fi
 
-output_file="/home/jupyter/${POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.csv"
+output_file="/home/jupyter/gwas_${GWAS_POP}_db_${DB_POP}_predixcan_output_${PHECODE}_${MODEL}_${DATA}.csv"
 
 #copy MESA model files to workspace if they don't exist
 if [ ! -f "/home/jupyter/models_for_pwas/EN/cis/META_EN_covariances.txt.gz" ]; then
