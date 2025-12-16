@@ -1,11 +1,3 @@
-#!/usr/bin/R
-
-#if needed, install packages
-if (!requireNamespace("data.table", quietly = TRUE)) install.packages("data.table")
-if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
-if (!requireNamespace("stringr", quietly = TRUE)) install.packages("stringr")
-if (!requireNamespace("argparse", quietly = TRUE)) install.packages("argparse")
-
 library(data.table)
 library(dplyr)
 library(stringr)
