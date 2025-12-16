@@ -1,3 +1,5 @@
+#!/usr/bin/R
+
 #if needed, install packages
 if (!requireNamespace("data.table", quietly = TRUE)) install.packages("data.table")
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
