@@ -1,5 +1,28 @@
 # mesa_pwas
 For more detailed set up info, take a look at the wiki from this github: https://github.com/bmoginot/GWAS-TWAS-in-All-of-Us-Cloud
+
+This github was configured with .yaml updated 03Jul2025:   
+
+- name: imlabtools   
+- channels:
+   - defaults
+   - conda-forge
+   - moble
+   - bioconda      
+- dependencies:
+   - python=3.9
+   - pandas=2.2
+   - scipy=1.12
+   - numpy=1.26
+   - pyliftover=0.4
+   - statsmodels=0.14
+   - h5py=3.12
+   - pyarrow=19.0
+   - pip=25.0
+   - pip:
+      - cyvcf2==0.30.28
+      - bgen-reader==4.0.8
+
 ***
 
 Installing pipeline in All of Us:   
